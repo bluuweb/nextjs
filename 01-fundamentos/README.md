@@ -52,6 +52,44 @@ Next.js tiene dos formas de renderizado previo: generación estática (SSG) y re
 
 <b>La representación del lado del servidor</b> es el método de representación previa que genera el HTML en cada solicitud.
 
+## Mi primer proyecto
+Para craer un proyecto necesitamos configurar Webpack, babel, SEO, prerenderizar, etc, pero Next nos resuelve esto con su instalación sin configuraciones.
+
+Requisitos
+```sh
+node -v
+npm -v
+```
+
+Instalador
+```sh
+npx create-next-app nombre-proyecto
+
+cd nombre-proyecto
+npm run dev
+```
+
+## VSC
+- [ES7 React](https://marketplace.visualstudio.com/items?itemName=dsznajder.es7-react-js-snippets)
+- [Theme](https://marketplace.visualstudio.com/items?itemName=dbanksdesign.nu-disco)
+
+```js
+_rfc (snippet)
+
+export default function about() {
+    return (
+        <div>
+            soy la página de about
+        </div>
+    )
+}
+```
+
+
+
 ## Pronto más secciones...
 - Estoy trabajando en los próximos videos...
-<img :src="$withBase('/img/trabajar.gif')">
+
+<div>
+    <img :src="$withBase('/img/trabajar.gif')">
+</div>
