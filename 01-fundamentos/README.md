@@ -488,6 +488,189 @@ Layout.defaultProps = {
 };
 ```
 
+## getStaticProps
+Para algunas páginas, es posible que no pueda procesar el HTML sin antes obtener algunos datos externos. Tal vez necesite acceder al sistema de archivos, obtener una API externa o consultar su base de datos en el momento de la compilación. Next.js admite en este caso: generación estática con datos, listos para usar.
+
+```js
+export default function Home(props) { ... }
+
+export async function getStaticProps() {
+  // Get external data from the file system, API, DB, etc.
+  const data = ...
+
+  // The value of the `props` key will be
+  //  passed to the `Home` component
+  return {
+    props: ...
+  }
+}
+```
+
+### blog/index.jsx
+```jsx
+import Layout from "../../components/layout";
+
+export default function index({ data }) {
+  return (
+    <Layout
+      title="Lista de post escritos por mi"
+      description="descripcion de posts"
+    >
+      <h1>Lista de artículos</h1>
+      {data.map(({ id, title, body }) => (
+        <div key={id}>
+          <h3>{title}</h3>
+          <p>{body}</p>
+        </div>
+      ))}
+    </Layout>
+  );
+}
+
+export async function getStaticProps() {
+  try {
+    const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data = await res.json();
+    return {
+      props: {
+        data,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+```
+
+:::tip
+ ``getStaticProps`` <b>solo se ejecuta en el lado del servidor</b>. Nunca se ejecutará en el lado del cliente. Ni siquiera se incluirá en el paquete JS para el navegador. Eso significa que puede escribir código, como consultas directas a la base de datos, sin que se envíen a los navegadores.
+:::
+
+## getServerSideProps
+Si necesita obtener datos en el momento de la solicitud en lugar de en el momento de la compilación, puede probar la representación del lado del servidor.
+
+```js
+export async function getServerSideProps(context) {
+  return {
+    props: {
+      // props for your component
+    }
+  }
+}
+```
+
+## Client-side Rendering
+Si no necesita renderizar previamente los datos, también puede utilizar la siguiente estrategia (denominada renderización del lado del cliente).
+
+Este enfoque funciona bien para las páginas del panel de control del usuario, por ejemplo. Debido a que un tablero es una página privada específica del usuario, el SEO no es relevante y la página no necesita ser renderizada previamente . Los datos se actualizan con frecuencia, lo que requiere la obtención de datos en el momento de la solicitud.
+
+### SWR
+- [swr.vercel](https://swr.vercel.app/)
+
+El equipo detrás de Next.js ha creado un enlace de React para la búsqueda de datos llamado SWR. Lo recomendamos encarecidamente si está obteniendo datos del lado del cliente. Maneja el almacenamiento en caché, la revalidación, el seguimiento de enfoque, la recuperación en el intervalo y más. 
+
+## getStaticPaths
+Next.js le permite generar páginas estáticamente con rutas que dependen de datos externos. Esto habilita las URL dinámicas en Next.js.
+
+blog/[id].jsx
+```jsx
+import Layout from "../../components/layout";
+
+export default function ArticuloUno({ data }) {
+  return (
+    <Layout title="Articulo 1 title" description="descripcion del titulo 1">
+      <h1>
+        {data.id} - {data.title}
+      </h1>
+      <p>{data.body}</p>
+    </Layout>
+  );
+}
+
+export async function getStaticPaths() {
+  try {
+    const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data = await res.json();
+    const paths = data.map(({ id }) => ({ params: { id: `${id}` } }));
+    return {
+      paths,
+      fallback: false,
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function getStaticProps({ params }) {
+  try {
+    const res = await fetch(
+      "https://jsonplaceholder.typicode.com/posts/" + params.id
+    );
+    const data = await res.json();
+    return {
+      props: {
+        data,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+```
+
+blog/index.jsx
+```jsx
+import Layout from "../../components/layout";
+import Link from "next/link";
+
+export default function index({ data }) {
+  return (
+    <Layout
+      title="Lista de post escritos por mi"
+      description="descripcion de posts"
+    >
+      <h1>Lista de artículos</h1>
+      {data.map(({ id, title, body }) => (
+        <div key={id}>
+          <h3>
+            <Link href={`/blog/${id}`}>
+              <a>
+                {id} - {title}
+              </a>
+            </Link>
+          </h3>
+          <p>{body}</p>
+        </div>
+      ))}
+    </Layout>
+  );
+}
+
+export async function getStaticProps() {
+  try {
+    const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data = await res.json();
+    return {
+      props: {
+        data,
+      },
+    };
+  } catch (error) {
+    console.log(error);
+  }
+}
+```
+
+## Más ejemplos:
+- [Blog Starter using markdown files (Demo)](https://github.com/vercel/next.js/tree/canary/examples/blog-starter)
+- [WordPress Example (Demo)](https://github.com/vercel/next.js/tree/canary/examples/cms-wordpress)
+- [DatoCMS Example (Demo)](https://github.com/vercel/next.js/tree/canary/examples/cms-datocms)
+- [TakeShape Example (Demo)](https://github.com/vercel/next.js/tree/canary/examples/cms-takeshape)
+- [Sanity Example (Demo)](https://github.com/vercel/next.js/tree/canary/examples/cms-sanity)
+
+## Deploy
+- [deploying](https://nextjs.org/learn/basics/deploying-nextjs-app)
+
 ## Pronto más secciones...
 - Estoy trabajando en los próximos videos...
 
