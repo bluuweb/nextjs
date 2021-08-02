@@ -14,10 +14,7 @@ module.exports = {
       { text: "Curso Vue 3", link: "http://curso-vue-js-udemy.bluuweb.cl" },
       { text: "Curso React", link: "http://curso-react-js-udemy.bluuweb.cl" },
     ],
-    sidebar: [
-      "/",
-      "/01-fundamentos/",
-    ],
+    sidebar: ["/", "/01-fundamentos/", "/02-mongodb/"],
   },
 };
 
