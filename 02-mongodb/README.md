@@ -9,7 +9,7 @@ Vamos a conocer como trabajar con SSR y SWR, conectándonos a MongoDB a través 
 - [Examples Next js](https://github.com/vercel/next.js/tree/canary/examples)
 
 ## Github (código final)
-- [REPO](https://github.com/bluuweb/nextjs-mongodb-mongoose)
+- [REPO](https://github.com/bluuweb/next-mongo-mongoose-youtube)
 
 ## Requisitos
 Conocer las bases de Node.js + MongoDB
